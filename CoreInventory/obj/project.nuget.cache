@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "qDNrkP9zkcg=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\PREGRADO\\Source\\Repos\\CoreInventory\\CoreInventory\\CoreInventory.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\PREGRADO\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.4\\microsoft.aspnetcore.openapi.9.0.4.nupkg.sha512",
+    "C:\\Users\\PREGRADO\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
+    "C:\\Users\\PREGRADO\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512"
+  ],
+  "logs": []
+}
