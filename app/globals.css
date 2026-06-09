@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+
+  --color-card: oklch(0.18 0.004 270);
+  --color-card-foreground: oklch(0.985 0 0);
+
+  --color-popover: oklch(0.18 0.004 270);
+  --color-popover-foreground: oklch(0.985 0 0);
+
+  --color-primary: oklch(0.985 0 0);
+  --color-primary-foreground: oklch(0.18 0.004 270);
+
+  --color-secondary: oklch(0.24 0.004 270);
+  --color-secondary-foreground: oklch(0.985 0 0);
+
+  --color-muted: oklch(0.24 0.004 270);
+  --color-muted-foreground: oklch(0.65 0.004 270);
+
+  --color-accent: oklch(0.62 0.18 250);
+  --color-accent-foreground: oklch(0.985 0 0);
+
+  --color-destructive: oklch(0.58 0.21 25);
+  --color-destructive-foreground: oklch(0.985 0 0);
+
+  --color-success: oklch(0.7 0.17 155);
+  --color-success-foreground: oklch(0.145 0 0);
+
+  --color-warning: oklch(0.78 0.16 75);
+  --color-warning-foreground: oklch(0.145 0 0);
+
+  --color-border: oklch(0.27 0.004 270);
+  --color-input: oklch(0.27 0.004 270);
+  --color-ring: oklch(0.62 0.18 250);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius: 0.625rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+.btn-shine {
+  background-image: linear-gradient(
+    110deg,
+    var(--color-primary) 0%,
+    var(--color-primary) 40%,
+    oklch(0.78 0.16 250) 50%,
+    var(--color-primary) 60%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shine 4s linear infinite;
+}
