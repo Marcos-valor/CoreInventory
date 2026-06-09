@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { AlertTriangle, Pencil, Plus, Search, Trash2, RefreshCw } from "lucide-react"
+import { AlertTriangle, Pencil, Plus, Search, Trash2, RefreshCw, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useProducts } from "@/lib/api"
+import { useProducts, deleteProduct } from "@/lib/api"
 import type { Product } from "@/lib/types"
 import { AddProductDialog } from "@/components/add-product-dialog"
 
@@ -24,13 +24,27 @@ function StockBadge({ stock }: { stock: number }) {
 }
 
 export function ProductsView() {
-  const { products, isLoading, error, refresh } = useProducts()
+  const { products, source, isLoading, error, refresh } = useProducts()
   const [query, setQuery] = useState("")
+  const [deletingId, setDeletingId] = useState<number | null>(null)
 
   const filtered = useMemo(
     () => products.filter((p) => p.name.toLowerCase().includes(query.trim().toLowerCase())),
     [products, query],
   )
+
+  async function handleDelete(product: Product) {
+    if (!window.confirm(`Delete "${product.name}"? This cannot be undone.`)) return
+    setDeletingId(product.id)
+    try {
+      await deleteProduct(product.id)
+      await refresh()
+    } catch {
+      window.alert("Could not delete the product. Make sure the CoreInventory API is running.")
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,6 +64,7 @@ export function ProductsView() {
             <RefreshCw className="size-4" />
           </Button>
           <AddProductDialog
+            onCreated={() => refresh()}
             trigger={
               <Button variant="shine">
                 <Plus className="size-4" />
@@ -59,6 +74,18 @@ export function ProductsView() {
           />
         </div>
       </div>
+
+      {source === "mock" && !isLoading && (
+        <Alert>
+          <Info />
+          <AlertTitle>Showing sample data</AlertTitle>
+          <AlertDescription>
+            Couldn&apos;t reach the CoreInventory API at{" "}
+            <code className="font-mono text-xs">{"http://localhost:5193"}</code>. Start the .NET API
+            (<code className="font-mono text-xs">dotnet run</code>) to manage live data.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {error && (
         <Alert variant="destructive">
@@ -94,7 +121,14 @@ export function ProductsView() {
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((product) => <ProductRow key={product.id} product={product} />)
+              filtered.map((product) => (
+                <ProductRow
+                  key={product.id}
+                  product={product}
+                  onDelete={() => handleDelete(product)}
+                  deleting={deletingId === product.id}
+                />
+              ))
             )}
           </TableBody>
         </Table>
@@ -109,7 +143,15 @@ export function ProductsView() {
   )
 }
 
-function ProductRow({ product }: { product: Product }) {
+function ProductRow({
+  product,
+  onDelete,
+  deleting,
+}: {
+  product: Product
+  onDelete: () => void
+  deleting: boolean
+}) {
   return (
     <TableRow>
       <TableCell className="font-mono text-xs text-muted-foreground">#{product.id}</TableCell>
@@ -134,6 +176,8 @@ function ProductRow({ product }: { product: Product }) {
             size="icon"
             className="size-8 text-muted-foreground hover:text-destructive"
             aria-label={`Delete ${product.name}`}
+            onClick={onDelete}
+            disabled={deleting}
           >
             <Trash2 className="size-4" />
           </Button>

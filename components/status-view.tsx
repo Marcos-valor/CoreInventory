@@ -4,7 +4,7 @@ import { Server, Activity, CheckCircle2, XCircle, Loader2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ConnectionStatus } from "@/components/connection-status"
 import { useConnectionStatus } from "@/lib/api"
-import { API_BASE_URL, USE_MOCK_DATA } from "@/lib/types"
+import { API_BASE_URL } from "@/lib/types"
 
 export function StatusView() {
   const { connected, isChecking } = useConnectionStatus()

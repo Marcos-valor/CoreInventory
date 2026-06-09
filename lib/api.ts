@@ -1,19 +1,27 @@
 "use client"
 
 import useSWR from "swr"
-import { API_BASE_URL, USE_MOCK_DATA, MOCK_PRODUCTS, type Product } from "@/lib/types"
+import { API_BASE_URL, ENABLE_MOCK_FALLBACK, MOCK_PRODUCTS, type Product } from "@/lib/types"
+
+const REQUEST_TIMEOUT_MS = 4000
+
+async function timedFetch(input: string, init?: RequestInit) {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+  try {
+    return await fetch(input, { ...init, signal: controller.signal })
+  } finally {
+    clearTimeout(timeout)
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Connection status: GET /api/status/ping  ->  expects "pong"
 // ---------------------------------------------------------------------------
-async function pingFetcher(): Promise<boolean> {
-  if (USE_MOCK_DATA) {
-    // Simulate a short network round-trip for the preview.
-    await new Promise((r) => setTimeout(r, 700))
-    return true
-  }
+export type ConnectionState = "live" | "mock"
 
-  const res = await fetch(`${API_BASE_URL}/api/status/ping`, {
+async function pingFetcher(): Promise<boolean> {
+  const res = await timedFetch(`${API_BASE_URL}/api/status/ping`, {
     headers: { Accept: "text/plain, application/json" },
   })
   if (!res.ok) throw new Error(`Ping failed with status ${res.status}`)
@@ -37,30 +45,63 @@ export function useConnectionStatus() {
 }
 
 // ---------------------------------------------------------------------------
-// Products: GET /api/products
+// Products: GET /api/products  (falls back to sample data if the API is down)
 // ---------------------------------------------------------------------------
-async function productsFetcher(): Promise<Product[]> {
-  if (USE_MOCK_DATA) {
-    await new Promise((r) => setTimeout(r, 900))
-    return MOCK_PRODUCTS
-  }
+interface ProductsResult {
+  products: Product[]
+  source: ConnectionState
+}
 
-  const res = await fetch(`${API_BASE_URL}/api/products`, {
-    headers: { Accept: "application/json" },
-  })
-  if (!res.ok) throw new Error(`Failed to load products (status ${res.status})`)
-  return (await res.json()) as Product[]
+async function productsFetcher(): Promise<ProductsResult> {
+  try {
+    const res = await timedFetch(`${API_BASE_URL}/api/products`, {
+      headers: { Accept: "application/json" },
+    })
+    if (!res.ok) throw new Error(`Failed to load products (status ${res.status})`)
+    const products = (await res.json()) as Product[]
+    return { products, source: "live" }
+  } catch (err) {
+    if (ENABLE_MOCK_FALLBACK) {
+      return { products: MOCK_PRODUCTS, source: "mock" }
+    }
+    throw err
+  }
 }
 
 export function useProducts() {
-  const { data, error, isLoading, mutate } = useSWR<Product[]>("products", productsFetcher, {
+  const { data, error, isLoading, mutate } = useSWR<ProductsResult>("products", productsFetcher, {
     revalidateOnFocus: false,
   })
 
   return {
-    products: data ?? [],
+    products: data?.products ?? [],
+    source: data?.source ?? "mock",
     isLoading,
     error,
     refresh: () => mutate(),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mutations
+// ---------------------------------------------------------------------------
+export type ProductInput = Omit<Product, "id">
+
+export async function createProduct(payload: ProductInput): Promise<Product> {
+  const res = await timedFetch(`${API_BASE_URL}/api/products`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(payload),
+  })
+  if (!res.ok) throw new Error(`Failed to create product (status ${res.status})`)
+  return (await res.json()) as Product
+}
+
+export async function deleteProduct(id: number): Promise<void> {
+  const res = await timedFetch(`${API_BASE_URL}/api/products/${id}`, {
+    method: "DELETE",
+  })
+  if (!res.ok && res.status !== 404) {
+    throw new Error(`Failed to delete product (status ${res.status})`)
   }
 }

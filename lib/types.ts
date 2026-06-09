@@ -8,12 +8,14 @@ export interface Product {
 }
 
 // Base URL for the CoreInventory .NET API.
-// Set NEXT_PUBLIC_API_URL to your local API (e.g. http://localhost:5193) to connect.
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? ""
+// Defaults to the local "http" launch profile (http://localhost:5193).
+// Override with NEXT_PUBLIC_API_URL if your API runs elsewhere.
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5193"
 
-// Toggle: when no API URL is provided, the dashboard serves mock data so the
-// preview works out of the box. Remove this once your API is wired up.
-export const USE_MOCK_DATA = !API_BASE_URL
+// When the API can't be reached (e.g. in the hosted preview, where localhost
+// isn't available), the data layer falls back to this sample data so the
+// dashboard always renders. Real data is used automatically once the API is up.
+export const ENABLE_MOCK_FALLBACK = true
 
 export const MOCK_PRODUCTS: Product[] = [
   {

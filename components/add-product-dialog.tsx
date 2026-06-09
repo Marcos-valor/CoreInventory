@@ -12,33 +12,41 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog"
+import { createProduct } from "@/lib/api"
 
-// NOTE: This dialog collects the fields of the .NET Product model.
-// Wire the `handleSubmit` body to `POST /api/products` when your API is ready.
-export function AddProductDialog({ trigger }: { trigger: ReactNode }) {
+export function AddProductDialog({ trigger, onCreated }: { trigger: ReactNode; onCreated?: () => void }) {
   const [open, setOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    setError(null)
+    setSubmitting(true)
+
     const form = new FormData(e.currentTarget)
     const payload = {
-      name: String(form.get("name") ?? ""),
-      description: String(form.get("description") ?? ""),
+      name: String(form.get("name") ?? "").trim(),
+      description: String(form.get("description") ?? "").trim(),
       price: Number(form.get("price") ?? 0),
       stock: Number(form.get("stock") ?? 0),
-      category: String(form.get("category") ?? ""),
+      category: String(form.get("category") ?? "").trim(),
     }
 
-    // TODO: replace with a real request once the API is connected, e.g.:
-    // await fetch(`${API_BASE_URL}/api/products`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(payload),
-    // })
-    console.log("[v0] New product payload:", payload)
-    setOpen(false)
+    try {
+      await createProduct(payload)
+      setOpen(false)
+      onCreated?.()
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? `${err.message}. Make sure the CoreInventory API is running.`
+          : "Something went wrong while saving.",
+      )
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -74,14 +82,18 @@ export function AddProductDialog({ trigger }: { trigger: ReactNode }) {
             <Input id="category" name="category" placeholder="Peripherals" required />
           </div>
 
+          {error && (
+            <p className="text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          )}
+
           <DialogFooter className="mt-2">
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="submit" variant="shine">
-              Save product
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={submitting}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="shine" disabled={submitting}>
+              {submitting ? "Saving..." : "Save product"}
             </Button>
           </DialogFooter>
         </form>
