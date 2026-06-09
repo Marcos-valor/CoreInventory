@@ -1,12 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "qDNrkP9zkcg=",
+  "dgSpecHash": "o/kh7jJL9o0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\PREGRADO\\Source\\Repos\\CoreInventory\\CoreInventory\\CoreInventory.csproj",
+  "projectFilePath": "/vercel/share/v0-project/CoreInventory/CoreInventory.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\PREGRADO\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.4\\microsoft.aspnetcore.openapi.9.0.4.nupkg.sha512",
-    "C:\\Users\\PREGRADO\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
-    "C:\\Users\\PREGRADO\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512"
+    "/home/vercel-sandbox/.nuget/packages/microsoft.aspnetcore.openapi/9.0.4/microsoft.aspnetcore.openapi.9.0.4.nupkg.sha512",
+    "/home/vercel-sandbox/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
   ],
   "logs": []
 }
