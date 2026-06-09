@@ -1,6 +1,6 @@
 @CoreInventory_HostAddress = http://localhost:5193
 
-### Health check -> should return "pong"
+### Health check (expects "pong")
 GET {{CoreInventory_HostAddress}}/api/status/ping
 Accept: text/plain
 
@@ -31,10 +31,12 @@ Content-Type: application/json
 {
   "name": "Updated Product",
   "description": "Updated from the .http file",
-  "price": 29.99,
+  "price": 24.99,
   "stock": 5,
   "category": "Test"
 }
 
 ### Delete a product
 DELETE {{CoreInventory_HostAddress}}/api/products/1
+
+###
