@@ -1,0 +1,75 @@
+export interface Product {
+  id: number
+  name: string
+  description: string
+  price: number
+  stock: number
+  category: string
+}
+
+// Base URL for the CoreInventory .NET API.
+// Set NEXT_PUBLIC_API_URL to your local API (e.g. http://localhost:5193) to connect.
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? ""
+
+// Toggle: when no API URL is provided, the dashboard serves mock data so the
+// preview works out of the box. Remove this once your API is wired up.
+export const USE_MOCK_DATA = !API_BASE_URL
+
+export const MOCK_PRODUCTS: Product[] = [
+  {
+    id: 1,
+    name: "Mechanical Keyboard",
+    description: "Hot-swappable 75% keyboard with PBT keycaps",
+    price: 129.99,
+    stock: 42,
+    category: "Peripherals",
+  },
+  {
+    id: 2,
+    name: "USB-C Hub",
+    description: "7-in-1 aluminium hub with 4K HDMI and PD charging",
+    price: 49.5,
+    stock: 0,
+    category: "Accessories",
+  },
+  {
+    id: 3,
+    name: "27\" 4K Monitor",
+    description: "IPS panel, 99% sRGB, USB-C 90W power delivery",
+    price: 399.0,
+    stock: 17,
+    category: "Displays",
+  },
+  {
+    id: 4,
+    name: "Noise-Cancelling Headphones",
+    description: "Over-ear ANC headphones with 30h battery life",
+    price: 219.99,
+    stock: 8,
+    category: "Audio",
+  },
+  {
+    id: 5,
+    name: "Ergonomic Mouse",
+    description: "Vertical wireless mouse with programmable buttons",
+    price: 64.0,
+    stock: 120,
+    category: "Peripherals",
+  },
+  {
+    id: 6,
+    name: "Laptop Stand",
+    description: "Adjustable aluminium stand with cable management",
+    price: 34.95,
+    stock: 3,
+    category: "Accessories",
+  },
+  {
+    id: 7,
+    name: "1080p Webcam",
+    description: "Auto-focus webcam with dual noise-reducing mics",
+    price: 79.0,
+    stock: 56,
+    category: "Peripherals",
+  },
+]
