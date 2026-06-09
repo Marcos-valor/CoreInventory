@@ -1,6 +1,42 @@
 @CoreInventory_HostAddress = http://localhost:5193
 
-GET {{CoreInventory_HostAddress}}/weatherforecast/
+### Health check (expects "pong")
+GET {{CoreInventory_HostAddress}}/api/status/ping
+Accept: text/plain
+
+### List all products
+GET {{CoreInventory_HostAddress}}/api/products
 Accept: application/json
+
+### Get a single product by id
+GET {{CoreInventory_HostAddress}}/api/products/1
+Accept: application/json
+
+### Create a product
+POST {{CoreInventory_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Sample Product",
+  "description": "Created from the .http file",
+  "price": 19.99,
+  "stock": 10,
+  "category": "Test"
+}
+
+### Update a product
+PUT {{CoreInventory_HostAddress}}/api/products/1
+Content-Type: application/json
+
+{
+  "name": "Updated Product",
+  "description": "Updated from the .http file",
+  "price": 24.99,
+  "stock": 5,
+  "category": "Test"
+}
+
+### Delete a product
+DELETE {{CoreInventory_HostAddress}}/api/products/1
 
 ###

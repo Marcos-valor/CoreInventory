@@ -48,12 +48,14 @@ export function StatusView() {
           </div>
           <div className="flex items-center justify-between gap-2">
             <span className="text-muted-foreground">Mode</span>
-            <span className="font-medium">{USE_MOCK_DATA ? "Mock data" : "Live API"}</span>
+            <span className="font-medium">{connected ? "Live API" : "Mock data"}</span>
           </div>
-          {USE_MOCK_DATA && (
+          {!connected && !isChecking && (
             <p className="mt-1 rounded-md border border-border bg-secondary/50 p-3 text-xs leading-relaxed text-muted-foreground">
-              Set <code className="font-mono">NEXT_PUBLIC_API_URL</code> (e.g.{" "}
-              <code className="font-mono">http://localhost:5193</code>) to connect to your local CoreInventory API.
+              The API is unreachable, so the dashboard is showing sample data. Set{" "}
+              <code className="font-mono">NEXT_PUBLIC_API_URL</code> (e.g.{" "}
+              <code className="font-mono">http://localhost:5193</code>) and start the CoreInventory API to load live
+              data.
             </p>
           )}
         </CardContent>
